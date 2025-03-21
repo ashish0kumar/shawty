@@ -1,13 +1,13 @@
 package main
 
 import (
-	"ashish0kumar/shawty/utils"
 	"context"
 	"fmt"
 	"log"
 	"net/http"
 	"text/template"
 
+	"github.com/ashish0kumar/shawty/utils"
 	"github.com/joho/godotenv"
 )
 
