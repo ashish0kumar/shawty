@@ -36,7 +36,6 @@ func main() {
 
 	// Shortens the provided URL, store it and return it to our UI
 	http.HandleFunc("/shorten", func(writer http.ResponseWriter, req *http.Request) {
-
 		// Get the URL from the request
 		url := req.FormValue("url")
 		fmt.Println("Payload: ", url)
@@ -51,7 +50,24 @@ func main() {
 		utils.SetKey(&ctx, dbClient, shortURL, url, 0)
 
 		// Return the response to the UI rendered with HTMX
-		fmt.Fprintf(writer, `<p class="mt-4 text-blue-600"><a href="/r/%s" class="underline">%s</a></p>`, shortURL, fullShortURL)
+
+		resultHTML := `
+			<div class="bg-green-50 border border-green-200 rounded-lg p-4">
+				<div class="flex items-center mb-2">
+					<i class="fas fa-check-circle text-green-500 mr-2"></i>
+					<p class="font-medium text-green-800">URL Shortened Successfully!</p>
+				</div>
+				<div class="flex items-center justify-between bg-white rounded border p-3 mt-2">
+					<a href="/r/%s" class="text-blue-600 hover:text-blue-800 truncate max-w-[70%%]" target="_blank">%s</a>
+					<button class="copy-btn bg-gray-100 hover:bg-gray-200 text-gray-800 px-3 py-1 rounded text-sm transition" data-clipboard="%s">
+						<i class="fa-regular fa-copy text-gray-600"></i>
+					</button>
+				</div>
+				<p class="text-gray-600 text-sm mt-3">Click the link to visit or copy the link to clipboard!</p>
+			</div>
+    	`
+
+		fmt.Fprintf(writer, resultHTML, shortURL, fullShortURL, fullShortURL)
 	})
 
 	// Redirects to the long URL based on the short url

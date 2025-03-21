@@ -1,20 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shawty</title>
+    <title>Shawty - URL shortener</title>
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
 </head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center">
-    <div class="bg-white p-8 rounded-lg shadow-md w-96">
-        <h1 class="text-2xl font-bold mb-4">Shawty</h1>
-        <form hx-post="/shorten" hx-target="#result" hx-swap="innerHTML">
-            <input type="url" name="url" placeholder="Enter URL to shorten" class="w-full p-2 border rounded mb-4" required>
-            <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Shorten</button>
+
+<body
+    class="bg-gradient-to-br from-indigo-400 via-purple-300 to-blue-300 min-h-screen flex items-center justify-center p-4">
+    <div
+        class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md transform transition-all duration-300 hover:shadow-xl">
+        <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center">
+                <i class="fas fa-link text-3xl text-purple-600 mr-3"></i>
+                <h1 class="text-3xl font-bold text-gray-800">Shawty</h1>
+            </div>
+            <a href="https://github.com/ashish0kumar/shawty" target="_blank"
+                class="text-gray-600 hover:text-purple-600 transition self-center" title="View on GitHub">
+                <i class="fab fa-github text-xl mr-2"></i>
+            </a>
+        </div>
+        <p class="text-gray-600 mb-6">Generate short, shareable links in seconds</p>
+        <form hx-post="/shorten" hx-target="#result" hx-swap="innerHTML" class="mb-6">
+            <div class="relative">
+                <input type="url" name="url" placeholder="Paste your long URL here"
+                    class="w-full p-4 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                    required>
+                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                    <i class="fas fa-globe text-gray-400"></i>
+                </div>
+            </div>
+            <button type="submit"
+                class="w-full mt-4 bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-medium py-3 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-600 transition shadow-md hover:shadow-lg">
+                <div class="flex items-center justify-center">
+                    <span>Shorten URL</span>
+                    <i class="fas fa-bolt ml-2"></i>
+                </div>
+            </button>
         </form>
-        <div id="result"></div>
+        <div id="result" class="mt-6"></div>
+        <div class="mt-8 pt-6 border-t border-gray-200">
+            <p class="text-sm text-gray-500 text-center mb-4">
+                Built with <i class="fas fa-heart text-red-400 mr-1"></i> using Go, Redis and HTMX 
+            </p>
+        </div>
     </div>
+    <script>
+        document.body.addEventListener('click', function (e) {
+            if (e.target && e.target.classList.contains('copy-btn')) {
+                const textToCopy = e.target.getAttribute('data-clipboard');
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    e.target.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                    setTimeout(() => {
+                        e.target.innerHTML = '<i class="fas fa-copy"></i> Copy';
+                    }, 2000);
+                });
+            }
+        });
+    </script>
 </body>
+
 </html>
