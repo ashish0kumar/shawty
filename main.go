@@ -23,6 +23,11 @@ func GetEnv(key, defaultValue string) string {
 	return value
 }
 
+// TemplateData structure to pass data to templates
+type TemplateData struct {
+	BaseURL string
+}
+
 func main() {
 	// Load .env file
 	err := godotenv.Load()
@@ -32,6 +37,11 @@ func main() {
 
 	// Get base URL from environment variable or use localhost as default
 	baseURL := GetEnv("BASE_URL", "http://localhost:8080")
+
+	// Create template data
+	templateData := TemplateData{
+		BaseURL: baseURL,
+	}
 
 	// Create the redisDB connection
 	dbClient := utils.NewRedisClient()
@@ -43,7 +53,7 @@ func main() {
 	// Serves the UI
 	http.HandleFunc("/", func(writer http.ResponseWriter, req *http.Request) {
 		tmpl := template.Must(template.ParseFiles("templates/index.html"))
-		tmpl.Execute(writer, nil)
+		tmpl.Execute(writer, templateData)
 	})
 
 	// Shortens the provided URL, store it and return it to our UI
