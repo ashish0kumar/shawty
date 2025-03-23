@@ -93,7 +93,7 @@ func main() {
                     <p class="font-medium text-green-800">URL Shortened Successfully!</p>
                 </div>
                 <div class="flex items-center justify-between bg-white rounded border p-3 mt-2">
-                    <a href="/r/%s" class="text-blue-600 hover:text-blue-800 truncate max-w-[70%%]" target="_blank">%s</a>
+                    <a href="/r/%s" class="text-blue-600 hover:text-blue-800 truncate max-w-[90%%]" target="_blank">%s</a>
                     <button class="copy-btn bg-gray-100 hover:bg-gray-200 text-gray-800 px-3 py-1 rounded text-sm transition" data-clipboard="%s">
                         <i class="fa-regular fa-copy text-gray-600"></i>
                     </button>
