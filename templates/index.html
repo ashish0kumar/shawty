@@ -13,7 +13,7 @@
 <body
     class="bg-gradient-to-br from-indigo-400 via-purple-300 to-blue-300 min-h-screen flex items-center justify-center p-4">
     <div
-        class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md transform transition-all duration-300 hover:shadow-xl">
+        class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-lg transform transition-all duration-300">
         <div class="flex items-center justify-between mb-6">
             <div class="flex items-center">
                 <i class="fas fa-link text-3xl text-purple-600 mr-3"></i>
@@ -43,11 +43,6 @@
             </button>
         </form>
         <div id="result" class="mt-6"></div>
-        <div class="mt-8 pt-6 border-t border-gray-200">
-            <p class="text-sm text-gray-500 text-center mb-4">
-                Built with <i class="fas fa-heart text-red-400 mr-1"></i> using Go, Redis and HTMX
-            </p>
-        </div>
     </div>
     <script>
         document.body.addEventListener('click', function (e) {
