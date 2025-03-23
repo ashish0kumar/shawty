@@ -8,6 +8,12 @@ import (
 	"github.com/go-redis/redis/v8"
 )
 
+// Prefix keys for different types of data
+const (
+	ShortURLPrefix = "short:" // For short URL to long URL mapping
+	LongURLPrefix  = "long:"  // For long URL to short URL mapping
+)
+
 func NewRedisClient() *redis.Client {
 	fmt.Println("Connecting to redis server on: ", os.Getenv("REDIS_HOST"))
 
@@ -21,18 +27,22 @@ func NewRedisClient() *redis.Client {
 	return rdb
 }
 
-func SetKey(ctx *context.Context, rdb *redis.Client, key string, value string, ttl int) {
+// SetKey stores both mappings: short->long and long->short
+func SetKey(ctx *context.Context, rdb *redis.Client, shortURL string, longURL string, ttl int) {
+	// Set short URL -> long URL mapping
+	fmt.Println("Setting key: ", ShortURLPrefix+shortURL, "to", longURL)
+	rdb.Set(*ctx, ShortURLPrefix+shortURL, longURL, 0)
 
-	// sets the key value pair in redis
-	// uses the context defined in main by reference and a TTL of 0 (no expiration)
+	// Set long URL -> short URL mapping for future lookups
+	fmt.Println("Setting reverse key: ", LongURLPrefix+longURL, "to", shortURL)
+	rdb.Set(*ctx, LongURLPrefix+longURL, shortURL, 0)
 
-	fmt.Println("Setting key: ", key, "to", value)
-	rdb.Set(*ctx, key, value, 0)
-	fmt.Println("The key", key, "set to", value, "successfully")
+	fmt.Println("URL mappings set successfully")
 }
 
+// GetLongURL retrieves the long URL for a given short code
 func GetLongURL(ctx *context.Context, rdb *redis.Client, shortURL string) (string, error) {
-	longURL, err := rdb.Get(*ctx, shortURL).Result()
+	longURL, err := rdb.Get(*ctx, ShortURLPrefix+shortURL).Result()
 
 	if err == redis.Nil {
 		return "", fmt.Errorf("shortened URL not found")
@@ -41,4 +51,17 @@ func GetLongURL(ctx *context.Context, rdb *redis.Client, shortURL string) (strin
 	}
 
 	return longURL, nil
+}
+
+// GetExistingShortURL checks if a URL has already been shortened
+func GetExistingShortURL(ctx *context.Context, rdb *redis.Client, longURL string) (string, error) {
+	shortURL, err := rdb.Get(*ctx, LongURLPrefix+longURL).Result()
+
+	if err == redis.Nil {
+		return "", nil // No error, just not found
+	} else if err != nil {
+		return "", fmt.Errorf("error checking existing URL: %v", err)
+	}
+
+	return shortURL, nil
 }

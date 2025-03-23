@@ -62,13 +62,28 @@ func main() {
 		url := req.FormValue("url")
 		fmt.Println("Payload: ", url)
 
-		// Shorten the URL
-		shortURL := utils.GetShortCode()
-		fullShortURL := fmt.Sprintf("%s/r/%s", baseURL, shortURL)
-		fmt.Printf("Shortened URL: %s\n", shortURL)
+		var shortURL string
 
-		// Set the key in Redis
-		utils.SetKey(&ctx, dbClient, shortURL, url, 0)
+		// Check if this URL has already been shortened
+		existingShortURL, err := utils.GetExistingShortURL(&ctx, dbClient, url)
+		if err != nil {
+			fmt.Printf("Error checking existing URL: %v\n", err)
+		}
+
+		if existingShortURL != "" {
+			// Use the existing short URL
+			shortURL = existingShortURL
+			fmt.Printf("Using existing short URL: %s\n", shortURL)
+		} else {
+			// Create a new short URL
+			shortURL = utils.GetShortCode()
+			fmt.Printf("Generated new short URL: %s\n", shortURL)
+
+			// Store both mappings
+			utils.SetKey(&ctx, dbClient, shortURL, url, 0)
+		}
+
+		fullShortURL := fmt.Sprintf("%s/r/%s", baseURL, shortURL)
 
 		// Return the response to the UI rendered with HTMX
 		resultHTML := `
