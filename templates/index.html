@@ -49,7 +49,7 @@
             if (e.target && e.target.classList.contains('copy-btn')) {
                 const textToCopy = e.target.getAttribute('data-clipboard');
                 navigator.clipboard.writeText(textToCopy).then(() => {
-                    e.target.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                    e.target.innerHTML = '<i class="fas fa-check"></i>';
                     setTimeout(() => {
                         e.target.innerHTML = '<i class="fa-regular fa-copy text-gray-600"></i>';
                     }, 2000);
