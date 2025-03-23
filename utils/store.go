@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/go-redis/redis/v8"
 )
@@ -29,13 +30,16 @@ func NewRedisClient() *redis.Client {
 
 // SetKey stores both mappings: short->long and long->short
 func SetKey(ctx *context.Context, rdb *redis.Client, shortURL string, longURL string, ttl int) {
-	// Set short URL -> long URL mapping
-	fmt.Println("Setting key: ", ShortURLPrefix+shortURL, "to", longURL)
-	rdb.Set(*ctx, ShortURLPrefix+shortURL, longURL, 0)
+	var ttlDuration time.Duration
+	if ttl > 0 {
+		ttlDuration = time.Duration(ttl) * time.Hour
+	}
 
-	// Set long URL -> short URL mapping for future lookups
-	fmt.Println("Setting reverse key: ", LongURLPrefix+longURL, "to", shortURL)
-	rdb.Set(*ctx, LongURLPrefix+longURL, shortURL, 0)
+	fmt.Println("Setting key: ", ShortURLPrefix+shortURL, "to", longURL, "with TTL:", ttlDuration)
+	rdb.Set(*ctx, ShortURLPrefix+shortURL, longURL, ttlDuration)
+
+	fmt.Println("Setting reverse key: ", LongURLPrefix+longURL, "to", shortURL, "with TTL:", ttlDuration)
+	rdb.Set(*ctx, LongURLPrefix+longURL, shortURL, ttlDuration)
 
 	fmt.Println("URL mappings set successfully")
 }

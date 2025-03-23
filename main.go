@@ -80,7 +80,7 @@ func main() {
 			fmt.Printf("Generated new short URL: %s\n", shortURL)
 
 			// Store both mappings
-			utils.SetKey(&ctx, dbClient, shortURL, url, 0)
+			utils.SetKey(&ctx, dbClient, shortURL, url, 24)
 		}
 
 		fullShortURL := fmt.Sprintf("%s/r/%s", baseURL, shortURL)
