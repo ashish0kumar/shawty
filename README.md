@@ -4,6 +4,8 @@ A modern, lightweight **URL shortening service** built with **Go, Redis, and
 HTMX**. <br> Generate **concise**, **shareable links** in seconds with a
 **clean, responsive UI**.
 
+<img src="./assets/ss.png" width="50%" />
+
 ## Features
 
 - **Fast URL shortening** using timestamp-based encoding
@@ -23,8 +25,6 @@ _Check out the live demo at:
 > Since Shawty is a learning project, it is deployed on a free-tier service,
 > which ironically means the shortened URL might end up longer than your
 > original one.
-
-<img src="./assets/ss.png" width="50%" />
 
 ## Quick Start
 
