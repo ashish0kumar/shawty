@@ -9,22 +9,22 @@ HTMX**. <br> Generate **concise**, **shareable links** in seconds with a
 ## Features
 
 - **Fast URL shortening** using timestamp-based encoding
-- **No duplicate URLs** - reuses existing short codes for the same URLs
-- **Modern, responsive UI with seamless HTMX-powered interactions**
+- **Reuses existing short codes** for the same URLs
+- **Modern, responsive UI** with seamless HTMX-powered interactions
 - **Redis backend** for efficient storage and retrieval
-- **Docker support** for easy deployment
 - **TTL support** for links (default: 24 hours)
-- **Cloud-ready** - deployed on Render with Cloud Redis
-
-## Live Demo
-
-_Check out the live demo at:
-[https://shawty-1845.onrender.com](https://shawty-1845.onrender.com)_
+- **Docker support** for easy deployment
+- **Deployed** on Render with Cloud Redis
 
 > [!NOTE]
 > Since Shawty is a learning project, it is deployed on a free-tier service,
 > which ironically means the shortened URL might end up longer than your
 > original one.
+
+## Live Demo
+
+Check out the live demo at:
+[https://shawty-1845.onrender.com](https://shawty-1845.onrender.com)
 
 ## Quick Start
 
@@ -92,7 +92,7 @@ This project is deployed on [Render](https://render.com) as a web service:
    - `REDIS_PASSWORD`: Your cloud Redis password
    - `BASE_URL`: Your Render app URL (e.g., `https://shawty-1845.onrender.com`)
 
-_Ensure Redis Cloud credentials are set in environment variables._
+Ensure Redis Cloud credentials are set in environment variables.
 
 ## Architecture
 
