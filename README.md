@@ -1,7 +1,7 @@
 # shawty
 
-**shawty** is a modern, lightweight **URL shortening service** built with **Go,
-Redis, and HTMX**. Generate **concise**, **shareable links** in seconds with a
+A modern, lightweight **URL shortening service** built with **Go, Redis, and
+HTMX**. <br> Generate **concise**, **shareable links** in seconds with a
 **clean, responsive UI**.
 
 ## Features
