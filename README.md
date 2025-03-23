@@ -24,6 +24,8 @@ _Check out the live demo at:
 > which ironically means the shortened URL might end up longer than your
 > original one.
 
+<img src="./assets/ss.png" width="50%" />
+
 ## Quick Start
 
 ### Prerequisites
