@@ -12,7 +12,10 @@ HTMX**. <br> Generate **concise**, **shareable links** in seconds with a
 - **Reuses existing short codes** for the same URLs
 - **Modern, responsive UI** with seamless HTMX-powered interactions
 - **Redis backend** for efficient storage and retrieval
+- **Google Safe Browsing API** checks and blocks malicious links before
+  shortening
 - **TTL support** for links (default: 24 hours)
+- **Rate limiting** to prevent abuse
 - **Docker support** for easy deployment
 - **Deployed** on Render with Cloud Redis
 
@@ -45,6 +48,9 @@ REDIS_PASSWORD=your_redis_password
 # For production with cloud Redis
 # REDIS_HOST=your-redis-instance.cloud-provider.com:port
 # REDIS_PASSWORD=your_redis_password
+
+# Google Safe Browsing API integration
+SAFE_BROWSING_API_KEY=your_safebrowsing_apikey
 
 BASE_URL=http://localhost:8080
 PORT=8080
@@ -91,8 +97,9 @@ This project is deployed on [Render](https://render.com) as a web service:
      `redis-12345.c56.us-east-1-2.ec2.cloud.redislabs.com:12345`)
    - `REDIS_PASSWORD`: Your cloud Redis password
    - `BASE_URL`: Your Render app URL (e.g., `https://shawty-1845.onrender.com`)
+   - `SAFE_BROWSING_API_KEY`: Your Google Safe Browsing API key
 
-Ensure Redis Cloud credentials are set in environment variables.
+> Ensure Redis Cloud credentials are set in environment variables.
 
 ## Architecture
 
@@ -117,20 +124,24 @@ Ensure Redis Cloud credentials are set in environment variables.
 
 ```
 └── ashish0kumar-shawty/
-    ├── Dockerfile         # Docker configuration
-    ├── go.mod             # Go module definition
-    ├── go.sum             # Go module checksums
-    ├── main.go            # Application entry point
-    ├── templates/         # HTML templates
-    │   └── index.html     # Main UI template
-    └── utils/             # Utility functions
-        ├── shorten.go     # URL shortening logic
-        └── store.go       # Redis storage operations
+    ├── Dockerfile           # Docker configuration
+    ├── go.mod               # Go module definition
+    ├── go.sum               # Go module checksums
+    ├── main.go              # Application entry point
+    ├── templates/           # HTML templates
+    │   └── index.html       # Main UI template
+    └── utils/               # Utility functions
+        ├── safebrowsing.go  # Safe Browing API
+        └── shorten.go       # URL shortening logic
+        ├── store.go         # Redis storage operations
+        └── validate.go      # URL validation logic
 ```
 
 ### Dependencies
 
 - [go-redis/redis](https://github.com/go-redis/redis) - Redis client for Go
+- [google/safebrowsing](https://github.com/google/safebrowsing) - Google Safe
+  Browsing API client
 - [joho/godotenv](https://github.com/joho/godotenv) - Loading environment
   variables
 - [HTMX](https://htmx.org/) - Frontend interactivity without JavaScript
@@ -138,8 +149,8 @@ Ensure Redis Cloud credentials are set in environment variables.
 
 ## TODO
 
-- [ ] Add URL content validation and checking for malicious URLs
-- [ ] Implement rate limiting for production use
+- [x] Add URL content validation and checking for malicious URLs
+- [x] Implement rate limiting for production use
 - [ ] Add analytics and click tracking functionality
 
 ## Contributing
