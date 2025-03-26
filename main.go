@@ -7,9 +7,11 @@ import (
 	"net/http"
 	"os"
 	"text/template"
+	"time"
 
 	"github.com/ashish0kumar/shawty/utils"
 	"github.com/joho/godotenv"
+	"golang.org/x/time/rate"
 )
 
 var ctx = context.Background()
@@ -61,8 +63,26 @@ func main() {
 		tmpl.Execute(writer, templateData)
 	})
 
+	var limiter = rate.NewLimiter(rate.Every(time.Second), 10) // 10 req/sec
+
 	// Shortens the provided URL, store it and return it to our UI
 	http.HandleFunc("/shorten", func(writer http.ResponseWriter, req *http.Request) {
+
+		// Rate limiting
+		if !limiter.Allow() {
+			writer.WriteHeader(http.StatusTooManyRequests)
+			fmt.Fprint(writer, `
+				<div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+					<div class="flex items-center mb-2">
+						<i class="fas fa-exclamation-triangle text-yellow-500 mr-2"></i>
+						<p class="font-medium text-yellow-800">Too Many Requests</p>
+					</div>
+					<p class="text-gray-600 text-sm mt-2">Please wait a moment before shortening another URL.</p>
+				</div>
+    		`)
+			return
+		}
+
 		// Get the URL from the request
 		url := req.FormValue("url")
 		fmt.Println("Payload: ", url)
@@ -106,21 +126,6 @@ func main() {
 						<p class="font-medium text-red-800">Malicious URL Detected</p>
 					</div>
 					<p class="text-gray-600 text-sm mt-2">This URL has been identified as malicious by Google Safe Browsing.</p>
-				</div>
-			`
-			fmt.Fprint(writer, errorHTML)
-			return
-		}
-
-		// Verify URL is reachable (optional, could slow down response)
-		if reachable, err := utils.IsURLReachable(url); err == nil && !reachable {
-			errorHTML := `
-				<div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-					<div class="flex items-center mb-2">
-						<i class="fas fa-unlink text-yellow-500 mr-2"></i>
-						<p class="font-medium text-yellow-800">URL Not Reachable</p>
-					</div>
-					<p class="text-gray-600 text-sm mt-2">This URL did not return a valid response.</p>
 				</div>
 			`
 			fmt.Fprint(writer, errorHTML)

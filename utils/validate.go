@@ -2,10 +2,8 @@ package utils
 
 import (
 	"fmt"
-	"net/http"
 	"net/url"
 	"strings"
-	"time"
 )
 
 // performs URL validation
@@ -96,22 +94,4 @@ func isReservedTLD(host string) bool {
 		}
 	}
 	return false
-}
-
-// verifies the URL returns a valid response
-func IsURLReachable(urlToCheck string) (bool, error) {
-	client := &http.Client{
-		Timeout: 5 * time.Second,
-		CheckRedirect: func(req *http.Request, via []*http.Request) error {
-			return http.ErrUseLastResponse
-		},
-	}
-
-	resp, err := client.Head(urlToCheck)
-	if err != nil {
-		return false, err
-	}
-	defer resp.Body.Close()
-
-	return resp.StatusCode >= 200 && resp.StatusCode < 400, nil
 }
