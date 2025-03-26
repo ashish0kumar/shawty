@@ -14,7 +14,7 @@ import (
 
 var ctx = context.Background()
 
-// GetEnv retrieves an environment variable or returns a default value if not found
+// retrieves an env variable or returns a default value if not found
 func GetEnv(key, defaultValue string) string {
 	value := os.Getenv(key)
 	if value == "" {
@@ -23,7 +23,7 @@ func GetEnv(key, defaultValue string) string {
 	return value
 }
 
-// TemplateData structure to pass data to templates
+// structure to pass data to templates
 type TemplateData struct {
 	BaseURL string
 }
@@ -35,7 +35,12 @@ func main() {
 		log.Println("Warning: Error loading .env file. Using system environment variables instead.")
 	}
 
-	// Get base URL from environment variable or use localhost as default
+	// Initialize safe browsing
+	if err := utils.InitSafeBrowsing(os.Getenv("SAFE_BROWSING_API_KEY")); err != nil {
+		log.Printf("Failed to initialize Safe Browsing: %v", err)
+	}
+
+	// Get base URL from env variable or use localhost as default
 	baseURL := GetEnv("BASE_URL", "http://localhost:8080")
 
 	// Create template data
@@ -62,6 +67,67 @@ func main() {
 		url := req.FormValue("url")
 		fmt.Println("Payload: ", url)
 
+		// Validate the URL
+		if err := utils.ValidateURL(url); err != nil {
+			errorHTML := `
+				<div class="bg-red-50 border border-red-200 rounded-lg p-4">
+					<div class="flex items-center mb-2">
+						<i class="fas fa-exclamation-circle text-red-500 mr-2"></i>
+						<p class="font-medium text-red-800">Invalid URL</p>
+					</div>
+					<p class="text-gray-600 text-sm mt-2">%s</p>
+				</div>
+			`
+			fmt.Fprintf(writer, errorHTML, err.Error())
+			return
+		}
+
+		// Check if URL is safe
+		isSafe, err := utils.CheckURLSafety(url)
+		if err != nil {
+			errorHTML := `
+				<div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+					<div class="flex items-center mb-2">
+						<i class="fas fa-exclamation-triangle text-yellow-500 mr-2"></i>
+						<p class="font-medium text-yellow-800">Security Check Failed</p>
+					</div>
+					<p class="text-gray-600 text-sm mt-2">Could not verify URL safety: %s</p>
+				</div>
+			`
+			fmt.Fprintf(writer, errorHTML, err.Error())
+			return
+		}
+
+		if !isSafe {
+			errorHTML := `
+				<div class="bg-red-50 border border-red-200 rounded-lg p-4">
+					<div class="flex items-center mb-2">
+						<i class="fas fa-ban text-red-500 mr-2"></i>
+						<p class="font-medium text-red-800">Malicious URL Detected</p>
+					</div>
+					<p class="text-gray-600 text-sm mt-2">This URL has been identified as malicious by Google Safe Browsing.</p>
+				</div>
+			`
+			fmt.Fprint(writer, errorHTML)
+			return
+		}
+
+		// Verify URL is reachable (optional, could slow down response)
+		if reachable, err := utils.IsURLReachable(url); err == nil && !reachable {
+			errorHTML := `
+				<div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+					<div class="flex items-center mb-2">
+						<i class="fas fa-unlink text-yellow-500 mr-2"></i>
+						<p class="font-medium text-yellow-800">URL Not Reachable</p>
+					</div>
+					<p class="text-gray-600 text-sm mt-2">This URL did not return a valid response.</p>
+				</div>
+			`
+			fmt.Fprint(writer, errorHTML)
+			return
+		}
+
+		// Shortening logic
 		var shortURL string
 
 		// Check if this URL has already been shortened
@@ -87,20 +153,20 @@ func main() {
 
 		// Return the response to the UI rendered with HTMX
 		resultHTML := `
-            <div class="bg-green-50 border border-green-200 rounded-lg p-4">
-                <div class="flex items-center mb-2">
-                    <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                    <p class="font-medium text-green-800">URL Shortened Successfully!</p>
-                </div>
-                <div class="flex items-center justify-between bg-white rounded border p-3 mt-2">
-                    <a href="/r/%s" class="text-blue-600 text-sm hover:text-blue-800 truncate max-w-[90%%]" target="_blank">%s</a>
-                    <button class="copy-btn bg-gray-100 hover:bg-gray-200 text-gray-800 px-3 py-1 rounded text-sm transition" data-clipboard="%s">
-                        <i class="fa-regular fa-copy text-gray-600"></i>
-                    </button>
-                </div>
-                <p class="text-gray-600 text-sm mt-3">Click the link to visit or copy the link to clipboard!</p>
-            </div>
-        `
+			<div class="bg-green-50 border border-green-200 rounded-lg p-4">
+				<div class="flex items-center mb-2">
+					<i class="fas fa-check-circle text-green-500 mr-2"></i>
+					<p class="font-medium text-green-800">URL Shortened Successfully!</p>
+				</div>
+				<div class="flex items-center justify-between bg-white rounded border p-3 mt-2">
+					<a href="/r/%s" class="text-blue-600 text-sm hover:text-blue-800 truncate max-w-[90%%]" target="_blank">%s</a>
+					<button class="copy-btn bg-gray-100 hover:bg-gray-200 text-gray-800 px-3 py-1 rounded text-sm transition" data-clipboard="%s">
+						<i class="fa-regular fa-copy text-gray-600"></i>
+					</button>
+				</div>
+				<p class="text-gray-600 text-sm mt-3">Click the link to visit or copy the link to clipboard!</p>
+			</div>
+		`
 		fmt.Fprintf(writer, resultHTML, shortURL, fullShortURL, fullShortURL)
 	})
 
