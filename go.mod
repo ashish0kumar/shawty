@@ -1,6 +1,7 @@
 module github.com/ashish0kumar/shawty
 
 go 1.23.2
+toolchain go1.24.1
 
 require (
 	github.com/go-redis/redis/v8 v8.11.5
@@ -15,5 +16,5 @@ require (
 	github.com/golang/protobuf v1.5.2 // indirect
 	golang.org/x/net v0.36.0 // indirect
 	golang.org/x/text v0.22.0 // indirect
-	google.golang.org/protobuf v1.28.0 // indirect
+	google.golang.org/protobuf v1.33.0 // indirect
 )
