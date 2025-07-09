@@ -1,10 +1,15 @@
-# shawty
+<h1 align="center">shawty</h1>
 
-A modern, lightweight **URL shortening service** built with **Go, Redis, and
-HTMX**. <br> Generate **concise**, **shareable links** in seconds with a
-**clean, responsive UI**.
+<p align="center">
+A modern, lightweight <b>URL shortening service</b> built with <b>Go, Redis, and
+HTMX</b></p>
+</p>
 
+<div align="center">
 <img src="./assets/ss.png" width="50%" />
+</div>
+
+---
 
 ## Features
 
@@ -163,6 +168,16 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## License
+<br>
 
-[MIT](LICENSE)
+<p align="center">
+	<img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/footers/gray0_ctp_on_line.svg?sanitize=true" />
+</p>
+
+<p align="center">
+        <i><code>&copy 2025-present <a href="https://github.com/ashish0kumar">Ashish Kumar</a></code></i>
+</p>
+
+<div align="center">
+<a href="https://github.com/ashish0kumar/shawty/blob/main/LICENSE"><img src="https://img.shields.io/github/license/ashish0kumar/shawty?style=for-the-badge&color=CBA6F7&logoColor=cdd6f4&labelColor=302D41" alt="LICENSE"></a>&nbsp;&nbsp;
+</div>
